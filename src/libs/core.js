@@ -17,3 +17,9 @@ insertScript(SEMI_JS);
 insertScript(SEMI_ICON_JS);
 insertStyle(SEMI_CSS);
 insertStyle(SEMI_ICON_CSS);
+
+// 插入返回菜单
+const root = document.getElementById('shadow-root');
+const returnMenu = document.createElement('div');
+returnMenu.innerHTML = '<a href="/"><返回</a>';
+document.querySelector('body').insertBefore(returnMenu, document.querySelector('h1'));
