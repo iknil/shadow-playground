@@ -1,10 +1,10 @@
-export const insertScript = (src) => {
+const insertScript = (src) => {
   const script = document.createElement('script');
   script.src = src;
   document.body.appendChild(script);
 }
 
-export const insertStyle = (href) => {
+const insertStyle = (href) => {
   const link = document.createElement('link');
   link.rel ='stylesheet';
   link.href = href;
@@ -43,7 +43,7 @@ function syncStyle(root) {
  * 3. 监听并同步外部style
  * 4. 注入入口javascript
  */
-export const createShadowRoot = (host, entry) => {
+const createShadowRoot = (host, entry) => {
   host.attachShadow({ mode: 'open' });
   const shadowRoot = host.shadowRoot;
 
@@ -88,7 +88,7 @@ export const createShadowRoot = (host, entry) => {
   });
 }
 
-export const getShadowDocument = (shadowRoot, originalDocument) => {
+const getShadowDocument = (shadowRoot, originalDocument) => {
   const proxyActions = ['appendchild'];
 
   return new Proxy(originalDocument, {
@@ -100,3 +100,30 @@ export const getShadowDocument = (shadowRoot, originalDocument) => {
     }
   });
 }
+
+const originalDocument = document;
+const shadowRoot = document.querySelector('#shadow-root').shadowRoot;
+
+const root = document.createElement('div');
+root.id = 'root';
+shadowRoot.appendChild(root);
+
+(function(document){
+    const { Button, Toast } = SemiUI;
+
+    class App extends React.Component {
+        constructor(props) {
+            super(props);
+        }
+
+        render() {
+            return React.createElement(
+            'div',
+            null,
+            React.createElement(Button, { onClick: () => Toast.info('Hello Seto') }, 'Hello Seto'),
+            );
+        }
+    }
+
+    ReactDOM.render(React.createElement(App, null), document.getElementById('root'));
+})(getShadowDocument(shadowRoot, originalDocument))

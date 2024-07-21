@@ -2,6 +2,7 @@ import { insertScript, insertStyle } from "./utils.js";
 
 const REACT_JS = "https://unpkg.com/react@17.0.2/umd/react.production.min.js";
 const REACT_DOM_JS = "https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min.js";
+const SANDBOX_JS = "/libs/seto.js";
 
 const SEMI_JS = "https://unpkg.com/@douyinfe/semi-ui@2.27.0/dist/umd/semi-ui.min.js";
 const SEMI_ICON_JS = "https://unpkg.com/@douyinfe/semi-icons@latest/dist/umd/semi-icons.min.js";
@@ -12,6 +13,9 @@ const SEMI_ICON_CSS = "https://unpkg.com/@douyinfe/semi-icons@latest/dist/css/se
 // 插入必要资源
 insertScript(REACT_JS);
 insertScript(REACT_DOM_JS);
+// insertScript(SANDBOX_JS);
+
+
 
 insertScript(SEMI_JS);
 insertScript(SEMI_ICON_JS);

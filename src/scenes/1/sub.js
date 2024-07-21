@@ -11,17 +11,17 @@ shadowRoot.appendChild(root);
     const { Button, Toast } = SemiUI;
 
     class App extends React.Component {
-    constructor(props) {
-        super(props);
-    }
+        constructor(props) {
+            super(props);
+        }
 
-    render() {
-        return React.createElement(
-        'div',
-        null,
-        React.createElement(Button, { onClick: () => Toast.info('hello world') }, 'hello world'),
-        );
-    }
+        render() {
+            return React.createElement(
+            'div',
+            null,
+            React.createElement(Button, { onClick: () => Toast.info('hello world') }, 'hello world'),
+            );
+        }
     }
 
     ReactDOM.render(React.createElement(App, null), document.getElementById('root'));
