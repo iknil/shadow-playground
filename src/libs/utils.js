@@ -17,8 +17,9 @@ export const insertStyle = (href) => {
  * @returns 
  */
 function isStyleTarget(targets) {
-  let list = Array.isArray(targets) ? targets : [targets];
-  
+  let list = targets.toString() === '[object NodeList]' ? targets : [targets];
+
+  window.a = targets;
   for (let i = 0; i < list.length; i ++) {
     if (['STYLE', 'LINK'].indexOf(list[i].nodeName) !== -1) {
       return true;
@@ -32,9 +33,55 @@ function isStyleTarget(targets) {
  * @param {Node} root 
  */
 function syncStyle(root) {
-  const styles = document.querySelectorAll('link, style');
-  root.innerHTML = '';
-  styles.forEach(item => root.appendChild(item.cloneNode(true)));
+  const mainStyles = document.querySelectorAll('link, style');
+  const shadowStyles = root.querySelectorAll('link, style');
+  let si = -1;
+  let cursor = shadowStyles[si + 1] ? shadowStyles[si + 1] : null;
+
+  mainStyles.forEach(item => {
+    const node = item.cloneNode(true);
+    let val = '';
+    let i = 0;
+
+    while ( i < node.attributes.length) {
+      val += node.attributes[i].nodeValue;
+      i++;
+    }
+
+    if (node.nodeName === 'STYLE') {
+      val += node.textContent;
+    }
+    let hash = time33(val);
+
+    // 尝试寻找原来已经存在的节点
+    let tmpi = si + 1;
+    while (tmpi < shadowStyles.length) {
+      if (hash.toString() === shadowStyles[tmpi].getAttribute('data-hash')) {
+        for (let j = si + 1; j < tmpi; j ++) {
+          shadowStyles[j].remove();
+        }
+        si = tmpi;
+        cursor = shadowStyles[si + 1] ? shadowStyles[si + 1] : null;
+        break;
+      }
+      tmpi ++;
+    }
+    if (si === tmpi) { // 节点已存在
+      // 不处理
+    } else {
+      node.setAttribute('data-hash', hash);
+      if (cursor === null) {
+        root.appendChild(node);
+      } else {
+        root.insertBefore(node, cursor);
+      }
+    }
+  });
+
+  // remove
+  for (let i = si + 1; i < shadowStyles.length; i ++) {
+    shadowStyles[i].remove();
+  }
 }
 
 /**
@@ -51,6 +98,7 @@ export const createShadowRoot = (host, entry) => {
   const styleDiv = document.createElement('div');
   styleDiv.id = '__style__';
   shadowRoot.appendChild(styleDiv);
+  window.styleDiv = styleDiv;
 
   // 需要在沙箱运行
   // 沙箱里面定制化document行为
@@ -99,4 +147,15 @@ export const getShadowDocument = (shadowRoot, originalDocument) => {
       return shadowRoot[key].bind(shadowRoot);
     }
   });
+}
+
+export const time33 = (text) => {
+  let hash = 5381;
+  let i = text.length;
+
+  while (i) {
+    hash = (hash * 33) ^ text.charCodeAt(--i);
+  }
+
+  return hash >>> 0;
 }
